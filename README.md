@@ -1,16 +1,32 @@
-## Hi there 👋
+# 工程月曆系統
 
-<!--
-**michaellee0208/michaellee0208** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+這是一個可直接用瀏覽器開啟的工程月曆系統，支援手機與電腦版面。
 
-Here are some ideas to get you started:
+## 開啟方式
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+直接開啟：
+
+```text
+index.html
+```
+
+## 功能
+
+- 可新增與切換不同案場
+- 可用年、月切換查看月曆
+- 工項可設定起始日期與結束日期
+- 可用不同顏色條狀顯示跨日工項
+- 可登錄天氣、工項、施工人員種類人數與備註
+- 月曆格內會顯示每日施作工項色條與人員摘要
+- 資料會自動儲存在目前瀏覽器
+- 可匯出 JSON 備份檔，也可再匯入還原
+
+## 備份建議
+
+系統資料存在瀏覽器本機，因此換電腦或清除瀏覽器資料前，請先按「匯出」產生備份檔。
+
+## 建置檢查
+
+```text
+npm run build
+```

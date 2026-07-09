@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>工程月曆系統</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <p class="eyebrow">Construction Calendar</p>
+          <h1>工程月曆系統</h1>
+          <p class="subtitle">案場排程、每日工項與人力紀錄</p>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-button" id="exportBtn" type="button" title="匯出備份">匯出</button>
+          <label class="ghost-button file-button" for="importFile" title="匯入備份">匯入</label>
+          <input id="importFile" type="file" accept="application/json,.json" />
+        </div>
+      </header>
+
+      <section class="toolbar" aria-label="月曆控制列">
+        <div class="field">
+          <label for="siteSelect">案場</label>
+          <select id="siteSelect"></select>
+        </div>
+        <button class="icon-button" id="addSiteBtn" type="button" title="新增案場">+</button>
+        <div class="field compact">
+          <label for="yearInput">年份</label>
+          <input id="yearInput" type="number" min="1900" max="2100" />
+        </div>
+        <div class="month-stepper">
+          <button class="icon-button" id="prevMonthBtn" type="button" title="上一月">&#8249;</button>
+          <select id="monthSelect" aria-label="月份"></select>
+          <button class="icon-button" id="nextMonthBtn" type="button" title="下一月">&#8250;</button>
+        </div>
+        <button class="primary-button" id="todayBtn" type="button">本月</button>
+      </section>
+
+      <section class="summary-row" aria-label="本月統計">
+        <article>
+          <span>施工天數</span>
+          <strong id="workDaysCount">0</strong>
+        </article>
+        <article>
+          <span>工項筆數</span>
+          <strong id="itemCount">0</strong>
+        </article>
+        <article>
+          <span>出工人次</span>
+          <strong id="workerCount">0</strong>
+        </article>
+      </section>
+
+      <section class="calendar-wrap">
+        <div class="calendar-head">
+          <div>
+            <p class="section-kicker">Monthly Schedule</p>
+            <h2 id="monthTitle">2026 年 7 月</h2>
+          </div>
+          <button class="primary-button" id="addEntryBtn" type="button">新增紀錄</button>
+        </div>
+        <div class="weekday-row" aria-hidden="true">
+          <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <section class="list-panel">
+        <div class="panel-title">
+          <h2>本月施工紀錄</h2>
+          <span id="recordHint">依日期排序</span>
+        </div>
+        <div class="record-list" id="recordList"></div>
+      </section>
+    </main>
+
+    <dialog id="entryDialog">
+      <form method="dialog" class="dialog-card" id="entryForm">
+        <div class="dialog-head">
+          <h2 id="dialogTitle">新增施工紀錄</h2>
+          <button class="icon-button" value="cancel" type="submit" title="關閉">x</button>
+        </div>
+        <input id="entryId" type="hidden" />
+        <div class="form-grid three">
+          <label>
+            起始日期
+            <input id="startDateInput" type="date" required />
+          </label>
+          <label>
+            結束日期
+            <input id="endDateInput" type="date" required />
+          </label>
+          <label>
+            天氣
+            <select id="weatherInput">
+              <option>晴</option>
+              <option>多雲</option>
+              <option>陰</option>
+              <option>雨</option>
+              <option>大雨</option>
+              <option>颱風</option>
+              <option>停工</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          條狀顏色
+          <select id="colorInput">
+            <option value="#176b5b">綠色｜一般施工</option>
+            <option value="#1f6feb">藍色｜土建/結構</option>
+            <option value="#b76e22">橘色｜機具/材料</option>
+            <option value="#7c3aed">紫色｜機電/設備</option>
+            <option value="#c2410c">紅褐｜停工/風險</option>
+            <option value="#0f766e">青色｜檢驗/收尾</option>
+          </select>
+        </label>
+        <label>
+          工項
+          <textarea id="itemsInput" rows="4" placeholder="每行一個工項，例如：模板組立、鋼筋綁紮"></textarea>
+        </label>
+        <label>
+          施工人員種類人數
+          <textarea id="workersInput" rows="3" placeholder="每行一種，例如：模板工 5"></textarea>
+        </label>
+        <label>
+          備註
+          <textarea id="noteInput" rows="3"></textarea>
+        </label>
+        <div class="dialog-actions">
+          <button class="danger-button" id="deleteEntryBtn" type="button">刪除</button>
+          <span></span>
+          <button class="ghost-button" value="cancel" type="submit">取消</button>
+          <button class="primary-button" id="saveEntryBtn" type="button">儲存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="siteDialog">
+      <form method="dialog" class="dialog-card small" id="siteForm">
+        <div class="dialog-head">
+          <h2>新增案場</h2>
+          <button class="icon-button" value="cancel" type="submit" title="關閉">x</button>
+        </div>
+        <label>
+          案場名稱
+          <input id="siteNameInput" type="text" required maxlength="60" />
+        </label>
+        <div class="dialog-actions">
+          <span></span><span></span>
+          <button class="ghost-button" value="cancel" type="submit">取消</button>
+          <button class="primary-button" id="saveSiteBtn" type="button">新增</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
