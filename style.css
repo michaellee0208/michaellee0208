@@ -333,6 +333,10 @@ textarea:focus {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
+.day-cell.selected {
+  box-shadow: inset 0 0 0 2px var(--brand);
+}
+
 .day-number {
   display: flex;
   justify-content: space-between;
@@ -459,6 +463,10 @@ textarea:focus {
   background: #fbfcfb;
 }
 
+.mobile-day-panel {
+  display: none;
+}
+
 dialog {
   border: 0;
   padding: 0;
@@ -554,15 +562,32 @@ dialog::backdrop {
 }
 
 @media (max-width: 680px) {
-  .app-shell {
-    padding: 10px;
+  html,
+  body {
+    min-height: 100%;
+    background: #f6f8f7;
   }
 
-  .topbar,
-  .calendar-head,
-  .panel-title {
-    align-items: stretch;
-    flex-direction: column;
+  .app-shell {
+    padding: 0;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    align-items: center;
+    border-radius: 0;
+    padding: 10px 12px;
+  }
+
+  .brand-block .eyebrow,
+  .brand-block .subtitle {
+    display: none;
+  }
+
+  h1 {
+    font-size: 1.15rem;
   }
 
   .top-actions {
@@ -570,33 +595,145 @@ dialog::backdrop {
     grid-template-columns: 1fr 1fr;
   }
 
+  .top-actions .ghost-button,
+  .top-actions .file-button {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 8px;
+    margin: 8px;
+    padding: 8px;
+  }
+
+  .toolbar .field.compact {
+    grid-column: span 1;
+  }
+
+  .month-stepper {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 38px 1fr 38px;
+  }
+
+  #todayBtn {
+    grid-column: span 1;
+  }
+
+  .ghost-button,
+  .primary-button,
+  .danger-button,
+  .icon-button {
+    min-height: 38px;
+    border-radius: 7px;
+  }
+
   .summary-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 8px;
+  }
+
+  .summary-row article {
+    padding: 8px;
+    gap: 2px;
+  }
+
+  .summary-row span {
+    font-size: 0.72rem;
+  }
+
+  .summary-row strong {
+    font-size: 1.15rem;
   }
 
   .calendar-wrap,
   .list-panel {
-    padding: 12px;
+    margin: 8px;
+    padding: 8px;
+  }
+
+  .calendar-head {
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
+
+  .calendar-head .section-kicker {
+    display: none;
+  }
+
+  .calendar-head h2 {
+    font-size: 1rem;
+  }
+
+  .calendar-head .primary-button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.86rem;
   }
 
   .weekday-row {
-    display: none;
+    display: grid;
+    border-radius: 7px 7px 0 0;
+  }
+
+  .weekday-row span {
+    min-height: 24px;
+    font-size: 0.72rem;
   }
 
   .calendar-grid {
-    grid-template-columns: 1fr;
-    border: 0;
-    gap: 10px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    gap: 0;
   }
 
   .day-cell {
-    min-height: 104px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    min-height: 54px;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    padding: 4px;
+    gap: 3px;
   }
 
   .day-cell.outside {
+    display: flex;
+    opacity: 0.45;
+  }
+
+  .day-number {
+    font-size: 0.78rem;
+    line-height: 1;
+  }
+
+  .weather-pill,
+  .worker-line,
+  .more-line {
     display: none;
+  }
+
+  .schedule-bars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    align-items: center;
+  }
+
+  .schedule-bar {
+    width: 8px;
+    height: 8px;
+    min-height: 8px;
+    border-radius: 999px;
+    padding: 0;
+    color: transparent;
+    font-size: 0;
+    box-shadow: none;
   }
 
   .form-grid,
@@ -609,6 +746,61 @@ dialog::backdrop {
   }
 
   .dialog-actions span {
+    display: none;
+  }
+
+  .mobile-day-panel {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .mobile-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile-panel-head strong {
+    font-size: 0.95rem;
+  }
+
+  .mobile-panel-head .primary-button {
+    min-height: 32px;
+  }
+
+  .mobile-entry-list {
+    display: grid;
+    gap: 6px;
+  }
+
+  .mobile-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--entry-color);
+    border-radius: 7px;
+    background: #fff;
+    padding: 8px 10px;
+    text-align: left;
+  }
+
+  .mobile-entry span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 800;
+  }
+
+  .mobile-entry small {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .list-panel {
     display: none;
   }
 }

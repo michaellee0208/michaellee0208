@@ -22,6 +22,7 @@ const defaultState = {
 let state = loadState();
 let viewYear = new Date().getFullYear();
 let viewMonth = new Date().getMonth();
+let selectedDateKey = toDateKey(new Date());
 
 const els = {
   siteSelect: document.querySelector("#siteSelect"),
@@ -38,6 +39,7 @@ const els = {
   workerCount: document.querySelector("#workerCount"),
   monthTitle: document.querySelector("#monthTitle"),
   calendarGrid: document.querySelector("#calendarGrid"),
+  mobileDayPanel: document.querySelector("#mobileDayPanel"),
   recordList: document.querySelector("#recordList"),
   addEntryBtn: document.querySelector("#addEntryBtn"),
   entryDialog: document.querySelector("#entryDialog"),
@@ -66,6 +68,7 @@ for (let i = 0; i < 12; i += 1) {
 }
 
 bindEvents();
+registerServiceWorker();
 render();
 
 function bindEvents() {
@@ -142,6 +145,7 @@ function render() {
   els.monthTitle.textContent = `${viewYear} 年 ${viewMonth + 1} 月`;
   renderCalendar();
   renderSummary();
+  renderMobileDayPanel();
   renderRecords();
 }
 
@@ -175,7 +179,16 @@ function renderCalendar() {
     cell.className = "day-cell";
     if (date.getMonth() !== viewMonth) cell.classList.add("outside");
     if (key === todayKey) cell.classList.add("today");
-    cell.addEventListener("click", () => openEntryDialog(key, dayEntries[0]?.id));
+    if (key === selectedDateKey) cell.classList.add("selected");
+    cell.addEventListener("click", () => {
+      selectedDateKey = key;
+      if (window.matchMedia("(max-width: 680px)").matches) {
+        renderCalendar();
+        renderMobileDayPanel();
+        return;
+      }
+      openEntryDialog(key, dayEntries[0]?.id);
+    });
 
     const weather = unique(dayEntries.map((entry) => entry.weather).filter(Boolean)).join(" / ");
     const bars = dayEntries.slice(0, 4);
@@ -194,6 +207,50 @@ function renderCalendar() {
     `;
     els.calendarGrid.append(cell);
   }
+}
+
+function renderMobileDayPanel() {
+  if (!els.mobileDayPanel) return;
+  const entries = getEntriesForDate(selectedDateKey);
+  const formattedDate = selectedDateKey.replaceAll("-", "/");
+  if (!entries.length) {
+    els.mobileDayPanel.innerHTML = `
+      <div class="mobile-panel-head">
+        <strong>${escapeHtml(formattedDate)}</strong>
+        <button class="primary-button" type="button" data-mobile-add="${escapeHtml(selectedDateKey)}">新增</button>
+      </div>
+      <div class="empty-state">當日尚無工項</div>
+    `;
+  } else {
+    els.mobileDayPanel.innerHTML = `
+      <div class="mobile-panel-head">
+        <strong>${escapeHtml(formattedDate)}</strong>
+        <button class="primary-button" type="button" data-mobile-add="${escapeHtml(selectedDateKey)}">新增</button>
+      </div>
+      <div class="mobile-entry-list">
+        ${entries
+          .map(
+            (entry) => `
+              <button class="mobile-entry" type="button" data-mobile-entry="${escapeHtml(entry.id)}" style="--entry-color:${escapeHtml(entry.color)}">
+                <span>${escapeHtml(entry.items[0] || "未填工項")}</span>
+                <small>${escapeHtml(formatEntryRange(entry))}</small>
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
+  els.mobileDayPanel.querySelector("[data-mobile-add]")?.addEventListener("click", (event) => {
+    openEntryDialog(event.currentTarget.dataset.mobileAdd);
+  });
+  els.mobileDayPanel.querySelectorAll("[data-mobile-entry]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const entry = state.entries.find((item) => item.id === button.dataset.mobileEntry);
+      openEntryDialog(entry?.startDate || selectedDateKey, button.dataset.mobileEntry);
+    });
+  });
 }
 
 function renderSummary() {
@@ -373,7 +430,15 @@ function stepMonth(offset) {
   const next = new Date(viewYear, viewMonth + offset, 1);
   viewYear = next.getFullYear();
   viewMonth = next.getMonth();
+  selectedDateKey = toDateKey(new Date(viewYear, viewMonth, 1));
   render();
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
 }
 
 function getMonthEntries() {

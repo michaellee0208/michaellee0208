@@ -1,0 +1,19 @@
+{
+  "name": "工程月曆系統",
+  "short_name": "工程月曆",
+  "description": "案場施工排程、工項與人力紀錄工具",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef1f3",
+  "theme_color": "#17233b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
