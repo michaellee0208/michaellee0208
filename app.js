@@ -114,6 +114,11 @@ function bindEvents() {
   els.deleteEntryBtn.addEventListener("click", deleteEntry);
   els.exportBtn.addEventListener("click", exportBackup);
   els.importFile.addEventListener("change", importBackup);
+  document.querySelectorAll(".dialog-close").forEach((button) => {
+    button.addEventListener("click", () => {
+      button.closest("dialog")?.close();
+    });
+  });
 }
 
 function loadState() {
