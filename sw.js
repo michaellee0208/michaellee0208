@@ -1,4 +1,4 @@
-const CACHE_NAME = "construction-calendar-app-v2";
+const CACHE_NAME = "construction-calendar-app-v4";
 const ASSETS = [
   "./",
   "./index.html",

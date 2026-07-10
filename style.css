@@ -801,6 +801,48 @@ dialog::backdrop {
   }
 
   .list-panel {
-    display: none;
+    display: block;
+  }
+
+  .list-panel .panel-title {
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
+
+  .list-panel .panel-title h2 {
+    font-size: 1rem;
+  }
+
+  .list-panel .panel-title span {
+    font-size: 0.78rem;
+  }
+
+  .record-list {
+    gap: 8px;
+  }
+
+  .record-card {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .record-date {
+    grid-column: auto;
+    font-size: 0.86rem;
+  }
+
+  .record-items {
+    font-size: 0.92rem;
+  }
+
+  .record-body p {
+    font-size: 0.82rem;
+  }
+
+  .record-card .ghost-button {
+    width: 100%;
+    min-height: 34px;
   }
 }
